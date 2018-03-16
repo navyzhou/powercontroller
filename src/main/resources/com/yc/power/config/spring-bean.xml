@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:component-scan base-package="com.yc.power">
+		<!-- 指定不要spring ioc扫描的 -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 导入资源文件 -->
+	<context:property-placeholder location="classpath:db.properties"/>
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${driverClass}"></property>
+		<property name="url" value="${url}"></property>
+		<property name="username" value="${user}"></property>
+		<property name="password" value="${password}"></property>
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 指定数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+		
+		<!-- mybatis的映射文件 -->
+		<property name="mapperLocations" value="classpath:com/yc/power/mapper/*Mapper.xml"></property>
+	
+		<!-- 实体类的别名 -->
+		<property name="typeAliasesPackage" value="com.yc.power.bean"></property>
+	</bean>
+	
+	<!-- 配置事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+</beans>

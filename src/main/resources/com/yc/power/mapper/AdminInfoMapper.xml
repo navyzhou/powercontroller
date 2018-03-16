@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yc.power.mapper.AdminInfoMapper">
+	<select id="adminInfoLogin" parameterType="Map" resultType="AdminInfo">
+		select aid,a.rid,aname,pwd,rname from adminInfo a,roles r where a.rid=r.rid and aid=#{aid} and pwd=#{pwd}
+	</select>
+
+	<select id="menuInfo" resultMap="menuInfos" parameterType="int">
+		select pid,p.iid,iname,i.mid,mname,urls from powers p,menuItem i,menu m where aid=#{aid} and p.iid=i.iid and m.mid=i.mid order by pid
+	</select>
+
+	<resultMap type="Menu" id="menuInfos">
+		<id column="mid" property="id" />
+		<result column="mname" property="text" />
+
+		<collection property="children" ofType="MenuItem">
+			<id column="iid" property="id" />
+			<result column="iname" property="text" />
+
+			<association property="attributes" javaType="Attributes">
+				<result property="url" column="urls" />
+			</association>
+		</collection>
+	</resultMap>
+</mapper>
